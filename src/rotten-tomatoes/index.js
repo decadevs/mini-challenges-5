@@ -8,6 +8,8 @@ function rottenTomatoes(grid) {
 
   let time = 0;
 
+  let arrayOfTime = [];
+
   let startingNodes = [];
 
   let vistedNodes = [];
@@ -19,8 +21,6 @@ function rottenTomatoes(grid) {
       }
     }
   }
-
-  // console.log(startingNodes);
 
   function checkForArray(parentArray, childArray) {
     const child = JSON.stringify(childArray);
@@ -46,66 +46,53 @@ function rottenTomatoes(grid) {
     );
   }
 
+  function checkNode(array) {
+    let adjacentList = [];
+
+    while (array.length > 0) {
+      vistedNodes.push(array[0]);
+
+      const adjacent = getAdjacents(array[0]);
+
+      for (let node of adjacent) {
+        if (
+          getGridItem(node[0], node[1]) === 1 &&
+          !checkForArray(vistedNodes, node)
+        ) {
+          adjacentList.push(node);
+          grid[node[0]][node[1]] = 2;
+        }
+      }
+
+      array.shift();
+    }
+
+    if (adjacentList.length > 0) {
+      checkNode(adjacentList);
+      time++;
+    }
+  }
+
   for (let start of startingNodes) {
     if (!checkForArray(vistedNodes, start)) {
-      let queue = [];
+      time = 0;
+      vistedNodes.push(start);
+      checkNode([start]);
+      arrayOfTime.push(time);
+    }
+  }
 
-      queue.push(start);
+  console.log(arrayOfTime);
 
-      while (queue.length > 0) {
-        vistedNodes.push(queue[0]);
-
-        let adjacents = getAdjacents(queue[0]);
-
-        for (let node of adjacents) {
-          if (
-            getGridItem(node[0], node[1]) > 0 &&
-            !checkForArray(vistedNodes, node)
-          ) {
-            queue.push(node);
-          }
-        }
-
-        queue.shift();
+  for (let row = 0; row < rowSize; row++) {
+    for (let column = 0; column < columnSize; column++) {
+      if (getGridItem(row, column) === 1) {
+        return -1;
       }
     }
   }
 
-  // function checkNode(array) {
-  //   let adjacentList = [];
-
-  //   for (let each of array) {
-  //     vistedNodes.push(each);
-
-  //     const adjacent = getAdjacents(each);
-
-  //     for (let node of adjacent) {
-  //       if (
-  //         getGridItem(node[0], node[1]) > 0 &&
-  //         !checkForArray(vistedNodes, node)
-  //       ) {
-  //         adjacentList.push(node);
-  //       }
-  //     }
-  //   }
-
-  //   time++;
-
-  //   if (adjacentList.length > 0) {
-  //     checkNode(adjacentList);
-  //     // time++;
-  //   }
-  // }
-
-  // for (let start of startingNodes) {
-  //   if (!checkForArray(vistedNodes, start)) {
-  //     vistedNodes.push(start);
-  //     checkNode([start]);
-  //     //  console.log(vistedNodes);
-  //   }
-  // }
-
-  return time;
+  return Math.max.apply(null, arrayOfTime);
 }
 
 module.exports = rottenTomatoes;
