@@ -9,8 +9,8 @@ class SpoilTomatoes {
     getRottenTomatoes() {
         const spoiltTomatoesLocations = [];
         let numGoodTomatoe = 0;
-        for (let row = 0; row < this.grid.length; row++) {
-            for (let col = 0; col < this.grid[row].length; col++) {
+        for (let row = 0; row <= this.rowLength; row++) {
+            for (let col = 0; col <= this.colLength; col++) {
                 if (this.grid[row][col] === 2) {
                     spoiltTomatoesLocations.push([row, col]);
                 }
