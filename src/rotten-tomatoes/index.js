@@ -2,6 +2,7 @@ function rottenTomatoes(grid) {
   let tempHolder = []
   let rotLevel = []
   let minutes = 0
+  //gets all good tomatoes adjacent to rotten tomatoes
   const getAdjacent1 = (index) => {
     let row = index[0]
     let column = index[1]
@@ -27,6 +28,7 @@ function rottenTomatoes(grid) {
     }
 
   }
+  //function to expand the level of rot
   const expandRot = (level) => {
     level.forEach(element => {
       getAdjacent1(element)
@@ -34,7 +36,7 @@ function rottenTomatoes(grid) {
     rotLevel = [...tempHolder]
     tempHolder = []
   }
-
+//fucntion to search for items in the grid
   const find = num => {
     for (let i = 0; i < grid.length; i += 1) {
       for (let j = 0; j < grid[i].length; j += 1) {
@@ -46,18 +48,21 @@ function rottenTomatoes(grid) {
     }
   }
 
+//find all the sources of the rot
   find(2)
+  //searches for the level of the rot and after every minute
   while (rotLevel.length !== 0) {
+
     expandRot(rotLevel)
     minutes = rotLevel.length !== 0 ? minutes+ 1 : minutes
   }
-
+//checks if there is any unaffected tomatoes
   find(1)
-
+//updates the time if there are unaffected tomatoes
   if (rotLevel.length !== 0) {
     minutes = -1
   }
-
+//returns the time for complete rot of the tomatoes
   return minutes
 
 }
