@@ -2,18 +2,21 @@ function rottenTomatoes(grid) {
   const rowSize = grid.length;
   const columnSize = grid[0].length;
 
+  // A function of getting the grid item
   function getGridItem(row, column) {
     return grid[parseInt(row)][parseInt(column)];
   }
 
+  // Initializing the time
   let time = 0;
 
-  let arrayOfTime = [];
-
+  // Initializing the starting nodes queue
   let startingNodes = [];
 
-  let vistedNodes = [];
+  // Initializing the visited nodes queue
+  let visitedNodes = [];
 
+  // Getting all the starting nodes
   for (let row = 0; row < rowSize; row++) {
     for (let column = 0; column < columnSize; column++) {
       if (getGridItem(row, column) === 2) {
@@ -22,6 +25,7 @@ function rottenTomatoes(grid) {
     }
   }
 
+  // Function for checking for the occurence of an array in another array
   function checkForArray(parentArray, childArray) {
     const child = JSON.stringify(childArray);
 
@@ -30,6 +34,7 @@ function rottenTomatoes(grid) {
     return contains;
   }
 
+  // Function for getting adjacents nodes of fresh tomatoes (i.e grid positions equal to 1)
   function getAdjacents(position) {
     const [row, column] = position;
 
@@ -46,18 +51,22 @@ function rottenTomatoes(grid) {
     );
   }
 
+  // Checking through the starting nodes
   function checkNode(array) {
     let adjacentList = [];
 
     while (array.length > 0) {
-      vistedNodes.push(array[0]);
+      // Pushing each array to visited nodes
+      visitedNodes.push(array[0]);
 
+      // Getting adjacents of each array
       const adjacent = getAdjacents(array[0]);
 
+      // Checking for fresh adjacents tomatoes and already visited nodes and adding to add to queue
       for (let node of adjacent) {
         if (
           getGridItem(node[0], node[1]) === 1 &&
-          !checkForArray(vistedNodes, node)
+          !checkForArray(visitedNodes, node)
         ) {
           adjacentList.push(node);
           grid[node[0]][node[1]] = 2;
@@ -67,23 +76,16 @@ function rottenTomatoes(grid) {
       array.shift();
     }
 
+    // Recursive checking of children nodes
     if (adjacentList.length > 0) {
       checkNode(adjacentList);
       time++;
     }
   }
 
-  for (let start of startingNodes) {
-    if (!checkForArray(vistedNodes, start)) {
-      time = 0;
-      vistedNodes.push(start);
-      checkNode([start]);
-      arrayOfTime.push(time);
-    }
-  }
+  checkNode(startingNodes);
 
-  console.log(arrayOfTime);
-
+  // Returning time for still fresh tomatoes
   for (let row = 0; row < rowSize; row++) {
     for (let column = 0; column < columnSize; column++) {
       if (getGridItem(row, column) === 1) {
@@ -92,7 +94,7 @@ function rottenTomatoes(grid) {
     }
   }
 
-  return Math.max.apply(null, arrayOfTime);
+  return time;
 }
 
 module.exports = rottenTomatoes;
