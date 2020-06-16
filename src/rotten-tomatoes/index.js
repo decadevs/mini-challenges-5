@@ -1,6 +1,6 @@
 function rottenTomatoes(grid) {
   var minutes=0;
-
+// this function identifies and stores, in an object, the index positions of the rotten tomatoes
   function identifyRottenTomatoes(grid){
     let rottenTomatoesPosition ={};
     let  rottenTomatoesRow=[];
@@ -18,7 +18,7 @@ function rottenTomatoes(grid) {
     }
     return {"R":rottenTomatoesRow, "c":rottenTomatoesCol}
   }
-
+//this function checks for fresh tomatoes adjacent to the rotten ones and rotten them
   function checkAdjacentFleshTomato(grid,gt){
 
     for(let a=0; a<gt.R.length; a++){
@@ -41,7 +41,7 @@ function rottenTomatoes(grid) {
       }
       grid[gt.R[a]][gt.c[a]] =0;
     }
-
+    // checking for any remaining rotten tomatoes
     if(identifyRottenTomatoes(grid).c.length !=0){
       minutes++
       checkAdjacentFleshTomato(grid,identifyRottenTomatoes(grid))
