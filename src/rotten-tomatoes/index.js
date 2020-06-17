@@ -31,7 +31,7 @@ function rottenTomatoes(grid) {
 
       // check left neigbour
       if (column - 1 >= 0 && graph[row][column - 1] === 1) {
-          affted.push(row,column-1)
+          affted.push([row,column-1])
       }
       
   }
@@ -52,8 +52,6 @@ for(let array of grid){
 return minuetes
 
 }
-
-    
 
 
 module.exports = rottenTomatoes;
