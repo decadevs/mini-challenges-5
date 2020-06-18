@@ -22,7 +22,9 @@ describe("Rotten Tomatoes", () => {
   });
 
   test("3", () => {
-    const grid = [[0, 2]];
+    const grid = [
+      [0, 2]
+    ];
 
     expect(getMinutes(grid)).toBe(0);
   });
