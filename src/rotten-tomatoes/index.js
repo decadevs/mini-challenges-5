@@ -58,12 +58,6 @@ function rottenTomatoes(grid) {
    return timer - 1;
 }
 
-console.log(rottenTomatoes([
-  [2, 1, 1],
-  [0, 1, 1],
-  [1, 0, 1],
-]));
-
 module.exports = rottenTomatoes;
 
 
