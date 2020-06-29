@@ -1,101 +1,130 @@
-// Boundary check
-function isOutOfBound(i, j, R, C) {
+// Pseudo:
+// Create an empty queue queue.
+// Find all rotten tomatoes and enqueue them to queue. Also enqueue a delimiter to indicate the beginning of next time frame.
+// Run a loop While queue is not empty
+// Do following while delimiter in queue is not reached
+// Dequeue an tomatoes from the queue, rot all adjacent tomatoes. While rotting the adjacent, make sure that the time frame is incremented only once. And the time frame is not incremented if there are no adjacent tomatoes.
+// Dequeue the old delimiter and enqueue a new delimiter. The tomatoes rotten in the previous time frame lie between the two delimiters.
+// Function to check whether the cell is delimiter
+// which is (-1, -1)
+
+// // Boundary check
+function boundaryCheck(i, j, R, C) {
   return i >= 0 && j >= 0 && i < R && j < C;
 }
 
-// check if atleast one tomato is fresh
+// // check if atleast one tomato is fresh
 function isFresh(grid, R) {
   for (let i = 0; i < R; i++) {
     if (grid[i].includes(1)) {
-      return -1;
+      return true;
     }
   }
-
   return false;
 }
 
+function isdelim(x, y) {
+  return x == -1 && y == -1;
+}
+
 function rottenTomatoes(grid) {
-  //scan the grid and store the location of all the rotten tomatoes
+  // Create a queue of cells
   let queue = [];
   let minutes = 0;
-  const ROW = grid.length;
-  const COL = grid[0].length;
-  for (let i = 0; i < ROW; i++) {
-    for (let j = 0; j < COL; j++) {
+  const R = grid.length;
+  const C = grid[0].length;
+  // Store all the cells having rotten tomatoes in first time frame
+  for (let i = 0; i < R; i++) {
+    for (let j = 0; j < C; j++) {
       if (grid[i][j] === 2) {
-        queue.push({ timeFrame: 0, x: i, y: j });
+        queue.push({ x: i, y: j });
       }
     }
   }
-
-  // // rot adjacent tomatoes
+  // Separate these rotten tomatoes from the tomatoes which will rotten
+  // due the tomatoes in first time frame using delimiter which is (-1, -1)
+  let delimiter = { x: -1, y: -1 };
+  queue.push(delimiter);
+  // return queue;
+  // Process the grid while there are rotten tomatoes in the queueueue
   while (queue.length > 0) {
-    var rot = queue.shift();
-    console.log(rot);
+    // This flag is used to the start of a timeframe
+    let flag = false;
+    // Process all the rotten tomatoes in current time frame.
+    while (!isdelim(queue[0].x, queue[0].y)) {
+      let temp = queue[0];
+      // Check right adjacent cell that if it can be rotten
+      if (
+        boundaryCheck(temp.x + 1, temp.y, R, C) &&
+        grid[temp.x + 1][temp.y] == 1
+      ) {
+        // if this is the first tomatoes to get rotten, increase
+        // count and set the flag.
+        if (!flag) {
+          minutes++;
+          flag = true;
+        }
 
-    // right
-    if (
-      isOutOfBound(rot.x, rot.y + 1, ROW, COL) &&
-      grid[rot.x][rot.y + 1] === 1
-    ) {
-      grid[rot.x][rot.y + 1] = 2;
-      queue.push({ timeFrame: minutes + 1, x: rot.x, y: rot.y + 1 });
+        // Make the tomatoes rotten
+        grid[temp.x + 1][temp.y] = 2;
+        queue.push({ x: temp.x + 1, y: temp.y });
+      }
+
+      // Check left adjacent cell that if it can be rotten
+      if (
+        boundaryCheck(temp.x - 1, temp.y, R, C) &&
+        grid[temp.x - 1][temp.y] == 1
+      ) {
+        if (!flag) {
+          minutes++;
+          flag = true;
+        }
+        grid[temp.x - 1][temp.y] = 2;
+
+        queue.push({ x: temp.x - 1, y: temp.y }); // push this cell to queue
+      }
+
+      // Check top adjacent cell that if it can be rotten
+      if (
+        boundaryCheck(temp.x, temp.y + 1, R, C) &&
+        grid[temp.x][temp.y + 1] == 1
+      ) {
+        if (!flag) {
+          minutes++;
+          flag = true;
+        }
+        grid[temp.x][temp.y + 1] = 2;
+
+        queue.push({ x: temp.x, y: temp.y + 1 }); // Push this cell to queue
+      }
+
+      // Check bottom adjacent cell if it can be rotten
+      if (
+        boundaryCheck(temp.x, temp.y - 1, R, C) &&
+        grid[temp.x][temp.y - 1] == 1
+      ) {
+        if (!flag) {
+          minutes++;
+          flag = true;
+        }
+        grid[temp.x][temp.y - 1] = 2;
+        queue.push({ x: temp.x, y: temp.y - 1 }); // push this cell to queue
+      }
+
+      queue.shift();
     }
-    // // left
-    if (
-      isOutOfBound(rot.x, rot.y - 1, ROW, COL) &&
-      grid[rot.x][rot.y - 1] === 1
-    ) {
-      grid[rot.x][rot.y - 1] = 2;
-      queue.push({ timeFrame: minutes + 1, x: rot.x, y: rot.y - 1 });
-    }
-    // //up
-    if (
-      isOutOfBound(rot.x - 1, rot.y, ROW, COL) &&
-      grid[rot.x - 1][rot.y] === 1
-    ) {
-      grid[rot.x - 1][rot.y] = 2;
-      queue.push({ timeFrame: minutes + 1, x: rot.x - 1, y: rot.y });
-    }
-    // //down
-    if (
-      isOutOfBound(rot.x + 1, rot.y, ROW, COL) &&
-      grid[rot.x + 1][rot.y] === 1
-    ) {
-      grid[rot.x + 1][rot.y] = 2;
-      queue.push({ timeFrame: minutes + 1, x: rot.x + 1, y: rot.y });
+
+    //   // Pop the delimiter
+    queue.shift();
+
+    // if queue is not empty redo the whole process
+    if (queue.length > 0) {
+      queue.push(delimiter);
     }
   }
 
-  return isFresh(grid, ROW) ? -1 : rot.timeFrame;
+  // Return -1 if all tomatoes could not rot, otherwise -1.
+  return isFresh(grid, R) ? -1 : minutes;
 }
 
-const Input = [
-  [2, 1, 1],
-  [1, 1, 0],
-  [0, 1, 1],
-];
-console.log(rottenTomatoes(Input));
 module.exports = rottenTomatoes;
-
-// console.log(rot);
-// output:
-
-// { timeFrame: 0, x: 0, y: 0 }
-// { timeFrame: 1, x: 0, y: 1 }
-// { timeFrame: 1, x: 1, y: 0 }
-// { timeFrame: 1, x: 0, y: 2 }
-// { timeFrame: 1, x: 1, y: 1 }
-// { timeFrame: 1, x: 2, y: 1 }
-// { timeFrame: 1, x: 2, y: 2 }
-// 1
-
-// expected:
-// { timeFrame: 0, x: 0, y: 0 }
-// { timeFrame: 1, x: 0, y: 1 }
-// { timeFrame: 1, x: 1, y: 0 }
-// { timeFrame: 2, x: 0, y: 2 }
-// { timeFrame: 2, x: 1, y: 1 }
-// { timeFrame: 3, x: 2, y: 1 }
-// { timeFrame: 4, x: 2, y: 2 }
-// 4
