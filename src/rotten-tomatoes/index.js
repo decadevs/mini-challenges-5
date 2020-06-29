@@ -46,9 +46,9 @@ function rottenTomatoes(grid) {
   let delimiter = { x: -1, y: -1 };
   queue.push(delimiter);
   // return queue;
-  // Process the grid while there are rotten tomatoes in the queueueue
+  // Process the grid while there are rotten tomatoes in the queue
   while (queue.length > 0) {
-    // This flag is used to the start of a timeframe
+    // This flag is used to track the start of a timeframe
     let flag = false;
     // Process all the rotten tomatoes in current time frame.
     while (!isdelim(queue[0].x, queue[0].y)) {
